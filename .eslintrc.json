@@ -5,5 +5,8 @@
         "eslint-config-moxy/addons/browser",
         "eslint-config-moxy/addons/node",
         "eslint-config-moxy/addons/jest"
-    ]
+    ],
+    "parserOptions": {
+        "sourceType": "module"
+    }
 }
