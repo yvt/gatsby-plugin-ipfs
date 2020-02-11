@@ -71,7 +71,21 @@ const relativizeJsFiles = async () => {
 
 const relativizeMiscAssetFiles = async () => {
     // Replaces all /__GATSBY_IPFS_PATH_PREFIX__/ strings to standard relative paths
-    const paths = await globby(['public/**/*', '!public/**/*.html', '!public/**/*.js']);
+    const paths = await globby([
+        'public/**/*',
+        '!public/**/*.html',
+        '!public/**/*.js',
+        // Page data shouldn't be relativized here because the web browser would
+        // end up resolving all relative URLs in page data based on the current
+        // page's URL (e.g., `/ipns/example.com/foo/bar/`) rather than the page
+        // data file's location (e.g., `/ipns/example.com/page-data/xxx.json`).
+        // We can't statically determine the page's URL, so there is no way to
+        // correctly relativize those URLs.
+        //
+        // Thus, we instead let the client-side code handle
+        // `__GATSBY_IPFS_PATH_PREFIX__` when it knows the actual path prefix.
+        '!public/page-data/**/*.json',
+    ]);
 
     await pMap(paths, async (path) => {
         // Skip if this is not a text file
